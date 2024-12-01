@@ -7,7 +7,7 @@ app.use(bodyParser.json()); // Nastavení middleware pro parsování JSON dat
 
 const cors = require('cors'); // Middleware pro povolení CORS
 app.use(cors({
-  origin: 'https://jamar88.github.io' // Povolit přístup pouze z GitHub Pages na této adrese
+  origin: 'https://simekmi21.github.io' // Povolit přístup pouze z GitHub Pages na této adrese
 }));
 
 // Paměťová databáze pro ukládání objednávek
