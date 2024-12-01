@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"> <!-- Nastavení znakové sady na UTF-8 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Zajišťuje responzivitu na různých zařízeních -->
+  <title>Kuchařské rozhraní</title>
+  <!-- Bootstrap CSS pro rychlé a elegantní stylování -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    /* Nastavení barvy pozadí a okrajů kontejneru */
+    body {
+      background-color: #f8f9fa; /* Světle šedé pozadí */
+    }
+    .container {
+      margin-top: 50px; /* Horní odsazení hlavního kontejneru */
+    }
+    .table-container {
+      margin-top: 30px; /* Horní odsazení tabulky objednávek */
+    }
+  </style>
+</head>
+<body>
+  <div class="container"> <!-- Hlavní obal stránky -->
+    <h1 class="text-center">Kuchařské rozhraní</h1> <!-- Hlavní nadpis stránky -->
+    <p class="text-center">
+      Zde vidíte všechny přijaté objednávky. Kliknutím na tlačítko „Hotovo“ označíte objednávku jako dokončenou.
+    </p>
+    
+    <!-- Tabulka objednávek -->
+    <div class="table-container">
+      <table class="table table-striped"> <!-- Tabulka s pruhovaným stylem -->
+        <thead>
+          <tr>
+            <th>Číslo stolu</th> <!-- Sloupec pro číslo stolu -->
+            <th>Objednávka</th> <!-- Sloupec pro seznam objednaných položek -->
+            <th>Stav</th> <!-- Sloupec pro stav objednávky -->
+            <th>Akce</th> <!-- Sloupec pro akční tlačítka -->
+          </tr>
+        </thead>
+        <tbody id="ordersTable">
+          <!-- Objednávky se načítají dynamicky pomocí JavaScriptu -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    // URL API, které poskytuje objednávky
+    const API_URL = 'https://restaurant-ordering-backend.onrender.com/api/orders';
+
+    // Funkce pro načtení objednávek z backendu
+    async function loadOrders() {
+      try {
+        // Odeslání GET požadavku na API
+        const response = await fetch(API_URL);
+        if (!response.ok) throw new Error('Chyba při načítání objednávek'); // Kontrola, zda odpověď není chyba
+        const orders = await response.json(); // Přečtení dat ve formátu JSON
+
+        const table = document.getElementById('ordersTable');
+        table.innerHTML = ''; // Vyčištění tabulky před načtením nových dat
+
+        // Iterace přes objednávky a jejich přidání do tabulky
+        orders.forEach((order) => {
+          const row = document.createElement('tr'); // Vytvoření řádku tabulky
+          row.innerHTML = `
+            <td>${order.tableNumber}</td> <!-- Číslo stolu -->
+            <td>${order.items.map(item => `${item.qty}x ${item.name}`).join(', ')}</td> <!-- Seznam položek -->
+            <td>
+              <!-- Zobrazení stavu objednávky s barevným odznakem -->
+              <span class="badge ${order.status === 'pending' ? 'bg-warning' : 'bg-success'}">
+                ${order.status === 'pending' ? 'Přijato' : 'K výdeji'}
+              </span>
+            </td>
+            <td>
+              <!-- Tlačítko "Hotovo" nebo text "Dokončeno" podle stavu -->
+              ${
+                order.status === 'pending'
+                  ? `<button class="btn btn-success btn-sm" onclick="completeOrder(${order.id})">Hotovo</button>`
+                  : '<span class="text-muted">Dokončeno</span>'
+              }
+            </td>
+          `;
+          table.appendChild(row); // Přidání řádku do tabulky
+        });
+      } catch (err) {
+        console.error('Chyba při načítání objednávek:', err); // Logování chyby do konzole
+        alert('Chyba při načítání objednávek.'); // Upozornění uživatele
+      }
+    }
+
+    // Funkce pro označení objednávky jako dokončené
+    async function completeOrder(orderId) {
+      console.log(`Odesílám PATCH požadavek na objednávku ID: ${orderId}`); // Debugování
+      try {
+        // Odeslání PATCH požadavku na aktualizaci stavu objednávky
+        const response = await fetch(`${API_URL}/${orderId}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' }, // Nastavení hlaviček
+          body: JSON.stringify({ status: 'completed' }), // Tělo požadavku s novým stavem
+        });
+
+        if (response.ok) {
+          const data = await response.text();
+          console.log('Objednávka byla aktualizována:', data);
+
+          // Ruční aktualizace DOM bez opětovného načítání všech objednávek
+          const row = document.querySelector(`#ordersTable tr button[onclick="completeOrder(${orderId})"]`).closest('tr');
+          row.querySelector('td:nth-child(3) .badge').textContent = 'K výdeji'; // Změna textu stavu
+          row.querySelector('td:nth-child(3) .badge').classList.replace('bg-warning', 'bg-success'); // Změna barvy odznaku
+          row.querySelector('td:nth-child(4)').innerHTML = '<span class="text-muted">Dokončeno</span>'; // Nahrazení tlačítka textem
+        } else {
+          const error = await response.text();
+          console.error('Chyba při aktualizaci objednávky (status != 200):', error); // Logování chyby
+          alert('Chyba při aktualizaci objednávky.'); // Upozornění uživatele
+        }
+      } catch (err) {
+        console.error('Chyba při komunikaci se serverem:', err); // Logování chyby
+        alert('Chyba při komunikaci se serverem.'); // Upozornění uživatele
+      }
+    }
+
+    // Načtení objednávek při načtení stránky
+    loadOrders(); // Automaticky zavolá funkci pro načtení objednávek při načtení stránky
+  </script>
+</body>
+</html>
