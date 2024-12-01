@@ -1,5 +1,5 @@
 {
-  "name": "restaurant-ordering-backend",
+  "name": "Objednavkovy-system",
   "version": "1.0.0",
   "description": "Backend pro objednávkový systém restaurace",
   "main": "server.js",
