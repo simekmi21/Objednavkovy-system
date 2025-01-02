@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Přihlášení</title>
+  <!-- Odkaz na Bootstrap CSS pro snadné stylování formuláře -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    /* Celkové stylování těla stránky */
+    body {
+      background-color: #f8f9fa; /* Světle šedé pozadí */
+      display: flex; /* Flexbox pro centrování obsahu */
+      align-items: center; /* Vertikální centrování */
+      justify-content: center; /* Horizontální centrování */
+      height: 100vh; /* Výška zabírá celou obrazovku */
+    }
+
+    /* Stylování kontejneru pro přihlašovací formulář */
+    .login-container {
+      width: 100%;
+      max-width: 400px; /* Maximální šířka formuláře */
+      padding: 20px; /* Vnitřní odsazení */
+      background: white; /* Bílý podklad formuláře */
+      border-radius: 10px; /* Zaoblené rohy */
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Jemný stín */
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <!-- Nadpis formuláře -->
+    <h1 class="text-center">Přihlášení</h1>
+    <!-- Přihlašovací formulář -->
+    <form id="loginForm">
+      <!-- Vstup pro uživatelské jméno -->
+      <div class="mb-3">
+        <label for="username" class="form-label">Uživatelské jméno</label>
+        <input type="text" class="form-control" id="username" required>
+      </div>
+
+      <!-- Vstup pro heslo -->
+      <div class="mb-3">
+        <label for="password" class="form-label">Heslo</label>
+        <input type="password" class="form-control" id="password" required>
+      </div>
+
+      <!-- Tlačítko pro odeslání formuláře -->
+      <button type="submit" class="btn btn-primary w-100">Přihlásit se</button>
+    </form>
+  </div>
+
+  <script>
+    // Přidání události na odeslání formuláře
+    document.getElementById('loginForm').addEventListener('submit', function (e) {
+      e.preventDefault(); // Zamezení výchozího chování formuláře
+
+      // Načtení hodnot z formuláře
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      // Ověření zadaných údajů
+      if (username === 'kuchar' && password === 'heslo123') { //Nastavení user a pass pro kuchaře
+        localStorage.setItem('loggedIn', 'true'); // Uložení informace o přihlášení
+        window.location.href = 'kitchen.html'; // Přesměrování na stránku kuchyně
+      } else {
+        alert('Nesprávné uživatelské jméno nebo heslo.'); // Chybová zpráva při nesprávném zadání
+      }
+    });
+  </script>
+</body>
+</html>
