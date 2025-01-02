@@ -1,126 +1,218 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="cs">
 <head>
-  <meta charset="UTF-8"> <!-- Nastavení znakové sady na UTF-8 -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Zajišťuje responzivitu na různých zařízeních -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kuchařské rozhraní</title>
-  <!-- Bootstrap CSS pro rychlé a elegantní stylování -->
+  <!-- Odkazy na Bootstrap CSS a ikony -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
   <style>
-    /* Nastavení barvy pozadí a okrajů kontejneru */
+    /* Stylizace pozadí stránky */
     body {
-      background-color: #f8f9fa; /* Světle šedé pozadí */
+      background-color: #f8f9fa;
     }
+
+    /* Odsazení hlavního kontejneru od vrchu */
     .container {
-      margin-top: 50px; /* Horní odsazení hlavního kontejneru */
+      margin-top: 50px;
     }
+
+    /* Odsazení tabulky od vrchu */
     .table-container {
-      margin-top: 30px; /* Horní odsazení tabulky objednávek */
+      margin-top: 30px;
+    }
+
+    /* Styl pro status "V přípravě" */
+    .status-preparing {
+      background-color: #ffcc00; /* Oranžová */
+      color: black;
+      font-weight: bold;
+      padding: 5px;
+      border-radius: 5px;
+      text-align: center;
+    }
+
+    /* Styl pro status "Hotovo" */
+    .status-completed {
+      background-color: #28a745; /* Zelená */
+      color: white;
+      font-weight: bold;
+      padding: 5px;
+      border-radius: 5px;
+      text-align: center;
+    }
+
+    /* Styl pro položky objednávky */
+    .order-item {
+      white-space: pre-wrap; /* Zajištění zalamování textu */
+      word-wrap: break-word;
+    }
+
+    /* Styl pro plovoucí tlačítko odhlášení */
+    .floating-logout-button {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+      background-color: #6c757d; /* Sekundární barva Bootstrap */
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 10px 15px;
+      font-size: 14px;
+      font-weight: bold;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Změna barvy tlačítka při najetí myší */
+    .floating-logout-button:hover {
+      background-color: #5a6268; /* Tmavší odstín */
+    }
+
+    /* Styl pro ikony v tlačítku odhlášení */
+    .floating-logout-button .button-icon i {
+      font-size: 20px;
+      color: white;
+    }
+
+    /* Responzivní stylování pro mobilní zařízení */
+    @media (max-width: 768px) {
+      .floating-logout-button {
+        bottom: 20px;
+        top: auto;
+        right: 20px;
+      }
+      .floating-logout-button .button-text {
+        display: none; /* Skrytí textu */
+      }
+      .floating-logout-button .button-icon {
+        display: inline; /* Zobrazení ikony */
+      }
+    }
+
+    /* Responzivní stylování pro větší zařízení */
+    @media (min-width: 769px) {
+      .floating-logout-button .button-text {
+        display: inline; /* Zobrazení textu */
+      }
+      .floating-logout-button .button-icon {
+        display: none; /* Skrytí ikony */
+      }
     }
   </style>
 </head>
 <body>
-  <div class="container"> <!-- Hlavní obal stránky -->
-    <h1 class="text-center">Kuchařské rozhraní</h1> <!-- Hlavní nadpis stránky -->
-    <p class="text-center">
-      Zde vidíte všechny přijaté objednávky. Kliknutím na tlačítko „Hotovo“ označíte objednávku jako dokončenou.
-    </p>
-    
-    <!-- Tabulka objednávek -->
+  <div class="container">
+    <!-- Tlačítko pro odhlášení -->
+    <button class="floating-logout-button" onclick="logout()">
+      <span class="button-text">Odhlásit se</span>
+      <span class="button-icon"><i class="bi bi-box-arrow-right"></i></span>
+    </button>
+
+    <!-- Nadpis a popis stránky -->
+    <h1 class="text-center">Kuchařské rozhraní</h1>
+    <p class="text-center">Zde vidíte všechny přijaté objednávky. Kliknutím na tlačítko „Hotovo“ označíte objednávku jako dokončenou.</p>
+
+    <!-- Tabulka pro zobrazení objednávek -->
     <div class="table-container">
-      <table class="table table-striped"> <!-- Tabulka s pruhovaným stylem -->
+      <table class="table table-striped">
         <thead>
           <tr>
-            <th>Číslo stolu</th> <!-- Sloupec pro číslo stolu -->
-            <th>Objednávka</th> <!-- Sloupec pro seznam objednaných položek -->
-            <th>Stav</th> <!-- Sloupec pro stav objednávky -->
-            <th>Akce</th> <!-- Sloupec pro akční tlačítka -->
+            <th>Číslo stolu</th>
+            <th>Objednávka</th>
+            <th>Stav</th>
+            <th>Akce</th>
           </tr>
         </thead>
         <tbody id="ordersTable">
-          <!-- Objednávky se načítají dynamicky pomocí JavaScriptu -->
+          <!-- Objednávky se načítají dynamicky -->
         </tbody>
       </table>
     </div>
   </div>
 
+  <!-- Skript pro správu objednávek a přihlášení -->
   <script>
-    // URL API, které poskytuje objednávky
-    const API_URL = 'https://Objednavkovy-system.onrender.com/api/orders';
+    // Kontrola, zda je uživatel přihlášen
+    if (localStorage.getItem('loggedIn') !== 'true') {
+      alert('Pro přístup na tuto stránku se musíte přihlásit.');
+      window.location.href = 'login.html'; // Přesměrování na přihlašovací stránku
+    }
 
-    // Funkce pro načtení objednávek z backendu
+    // Odhlášení uživatele
+    function logout() {
+      localStorage.removeItem('loggedIn'); // Odstranění přihlašovacího stavu
+      window.location.href = 'login.html'; // Přesměrování na přihlašovací stránku
+    }
+
+    // Načítání objednávek z API
     async function loadOrders() {
       try {
-        // Odeslání GET požadavku na API
-        const response = await fetch(API_URL);
-        if (!response.ok) throw new Error('Chyba při načítání objednávek'); // Kontrola, zda odpověď není chyba
-        const orders = await response.json(); // Přečtení dat ve formátu JSON
-
+        const response = await fetch('https://restaurant-ordering-backend.onrender.com/api/orders');
+        const orders = await response.json();
         const table = document.getElementById('ordersTable');
-        table.innerHTML = ''; // Vyčištění tabulky před načtením nových dat
+        table.innerHTML = '';
 
-        // Iterace přes objednávky a jejich přidání do tabulky
-        orders.forEach((order) => {
-          const row = document.createElement('tr'); // Vytvoření řádku tabulky
+        orders.forEach(order => {
+          const row = document.createElement('tr');
           row.innerHTML = `
-            <td>${order.tableNumber}</td> <!-- Číslo stolu -->
-            <td>${order.items.map(item => `${item.qty}x ${item.name}`).join(', ')}</td> <!-- Seznam položek -->
+            <td>${order.tableNumber}</td>
+            <td class="order-item">${order.items.map(item => `${item.qty}x ${item.name}`).join('<br>')}</td>
             <td>
-              <!-- Zobrazení stavu objednávky s barevným odznakem -->
-              <span class="badge ${order.status === 'pending' ? 'bg-warning' : 'bg-success'}">
-                ${order.status === 'pending' ? 'Přijato' : 'K výdeji'}
+              <span class="${
+order.status === 'completed' ? 'status-completed' : 'status-preparing'}">
+                ${order.status === 'completed' ? 'Hotovo' : 'Přijato'}
               </span>
             </td>
             <td>
-              <!-- Tlačítko "Hotovo" nebo text "Dokončeno" podle stavu -->
               ${
-                order.status === 'pending'
-                  ? `<button class="btn btn-success btn-sm" onclick="completeOrder(${order.id})">Hotovo</button>`
-                  : '<span class="text-muted">Dokončeno</span>'
-              }
+order.status === 'pending' ? `<button class="btn btn-success btn-sm" onclick="confirmCompletion(${order.id})">Hotovo</button>` : ''}
             </td>
           `;
-          table.appendChild(row); // Přidání řádku do tabulky
+          table.appendChild(row);
         });
-      } catch (err) {
-        console.error('Chyba při načítání objednávek:', err); // Logování chyby do konzole
-        alert('Chyba při načítání objednávek.'); // Upozornění uživatele
+      } catch (error) {
+        console.error('Chyba při načítání objednávek:', error);
       }
     }
 
-    // Funkce pro označení objednávky jako dokončené
-    async function completeOrder(orderId) {
-      console.log(`Odesílám PATCH požadavek na objednávku ID: ${orderId}`); // Debugování
+    // Potvrzení dokončení objednávky
+    function confirmCompletion(orderId) {
+      const isConfirmed = confirm('Je objednávka opravdu připravena k výdeji?');
+      if (isConfirmed) {
+        markAsCompleted(orderId);
+      }
+    }
+
+    // Aktualizace stavu objednávky na "completed"
+    async function markAsCompleted(orderId) {
       try {
-        // Odeslání PATCH požadavku na aktualizaci stavu objednávky
-        const response = await fetch(`${API_URL}/${orderId}`, {
+        const response = await fetch(`https://restaurant-ordering-backend.onrender.com/api/orders/${orderId}`, {
           method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' }, // Nastavení hlaviček
-          body: JSON.stringify({ status: 'completed' }), // Tělo požadavku s novým stavem
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: 'completed' }),
         });
 
         if (response.ok) {
-          const data = await response.text();
-          console.log('Objednávka byla aktualizována:', data);
-
-          // Ruční aktualizace DOM bez opětovného načítání všech objednávek
-          const row = document.querySelector(`#ordersTable tr button[onclick="completeOrder(${orderId})"]`).closest('tr');
-          row.querySelector('td:nth-child(3) .badge').textContent = 'K výdeji'; // Změna textu stavu
-          row.querySelector('td:nth-child(3) .badge').classList.replace('bg-warning', 'bg-success'); // Změna barvy odznaku
-          row.querySelector('td:nth-child(4)').innerHTML = '<span class="text-muted">Dokončeno</span>'; // Nahrazení tlačítka textem
+          loadOrders(); // Aktualizace tabulky objednávek
         } else {
           const error = await response.text();
-          console.error('Chyba při aktualizaci objednávky (status != 200):', error); // Logování chyby
-          alert('Chyba při aktualizaci objednávky.'); // Upozornění uživatele
+          console.error('Chyba při aktualizaci objednávky:', error);
         }
       } catch (err) {
-        console.error('Chyba při komunikaci se serverem:', err); // Logování chyby
-        alert('Chyba při komunikaci se serverem.'); // Upozornění uživatele
+        console.error('Chyba při aktualizaci objednávky:', err);
       }
     }
 
-    // Načtení objednávek při načtení stránky
-    loadOrders(); // Automaticky zavolá funkci pro načtení objednávek při načtení stránky
+    // První načtení objednávek a pravidelná aktualizace každých 5 sekund
+    loadOrders();
+    setInterval(loadOrders, 5000);
   </script>
 </body>
 </html>
