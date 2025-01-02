@@ -3,294 +3,190 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Objednávkový systém</title>
-  <!-- Vložený odkaz na Bootstrap pro stylování -->
+  <title>Objednávky zákazníků</title>
+  <!-- Bootstrap CSS pro základní stylování -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
   <style>
-    /* Vlastní styl pro šířku vstupních polí */
-    .select-qty {
-      width: 100px; /* Nastavení šířky pro výběr počtu kusů */
+    /* Nastavení pozadí celé stránky */
+    body {
+      background-color: #f8f9fa;
     }
-    .table-input {
-      width: 150px; /* Nastavení šířky pole pro číslo stolu */
+
+    /* Nastavení hlavního kontejneru s odsazením od horní části */
+    .container {
+      margin-top: 50px;
+    }
+
+    /* Kontejner pro tabulku, včetně horizontálního posouvání na malých obrazovkách */
+    .table-container {
+      margin-top: 30px;
+      overflow-x: auto; /* Umožňuje posouvání na malých obrazovkách */
+    }
+
+    /* Stylování stavu "V přípravě" */
+    .status-preparing {
+      background-color: #ffcc00; /* Oranžová barva */
+      color: black;
+      font-weight: bold;
+      padding: 5px;
+      border-radius: 5px;
+      text-align: center;
+    }
+
+    /* Stylování stavu "K vyzvednutí" */
+    .status-completed {
+      background-color: #28a745; /* Zelená barva */
+      color: white;
+      font-weight: bold;
+      padding: 5px;
+      border-radius: 5px;
+      text-align: center;
+    }
+
+    /* Plovoucí tlačítko pro přidání nové objednávky */
+    .floating-button {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #007bff; /* Modrá barva tlačítka */
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 15px 30px;
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Jemný stín */
+      cursor: pointer;
+    }
+
+    /* Styl tlačítka při najetí myší */
+    .floating-button:hover {
+      background-color: #0056b3;
+    }
+
+    /* Ikona uvnitř plovoucího tlačítka */
+    .floating-button .button-icon {
+      display: inline; /* Ikona je vždy viditelná */
+      font-size: 24px; /* Velikost ikony */
+    }
+
+    /* Text uvnitř plovoucího tlačítka */
+    .floating-button .button-text {
+      display: inline; /* Text je viditelný na větších zařízeních */
+    }
+
+    /* Média dotazy pro mobilní zařízení */
+    @media (max-width: 768px) {
+      /* Zmenšení velikosti textu v tabulce */
+      .table th, .table td {
+        font-size: 12px;
+      }
+
+      /* Každá položka objednávky na novém řádku */
+      .order-items {
+        white-space: pre-line;
+      }
+
+      /* Zachování názvů sloupců na jednom řádku */
+      .table thead th {
+        white-space: nowrap;
+      }
+
+      /* Skrytí textu plovoucího tlačítka na mobilu */
+      .floating-button .button-text {
+        display: none;
+      }
+
+      /* Ikona plovoucího tlačítka zůstane viditelná */
+      .floating-button .button-icon {
+        display: inline;
+      }
+    }
+
+    /* Média dotazy pro větší zařízení */
+    @media (min-width: 769px) {
+      /* Zobrazení textu plovoucího tlačítka na desktopu */
+      .floating-button .button-text {
+        display: inline;
+      }
+
+      /* Skrytí ikony plovoucího tlačítka na desktopu */
+      .floating-button .button-icon {
+        display: none;
+      }
     }
   </style>
 </head>
 <body>
-  <!-- Kontejner pro hlavní obsah -->
-  <div class="container mt-5">
-    <h1 class="text-center">Objednávkový systém</h1> <!-- Nadpis stránky -->
-    <form id="orderForm" class="mt-4">
-      <!-- Pole pro zadání čísla stolu -->
-      <div class="mb-3">
-        <label for="table" class="form-label">Číslo stolu:</label>
-        <input type="number" class="form-control form-control-sm table-input" id="table" placeholder="Zadejte číslo stolu" required>
-      </div>
+  <div class="container">
+    <h1 class="text-center">Objednávky zákazníků</h1>
+    <p class="text-center">Zde vidíte své objednávky, které jsou v přípravě nebo připravené k vyzvednutí.</p>
 
-      <!-- Kategorie jídel -->
-      <!-- Předkrmy -->
-      <h3>Předkrmy</h3>
-      <div class="d-flex align-items-center mb-2">
-        <input class="form-check-input me-2" type="checkbox" value="Bruschetta - 100 Kč" id="bruschetta">
-        <label class="form-check-label me-3" for="bruschetta">Bruschetta (100 Kč)</label>
-        <select class="form-select select-qty" id="bruschetta_qty" disabled>
-          <option value="1">1 ks</option>
-          <option value="2">2 ks</option>
-          <option value="3">3 ks</option>
-          <option value="4">4 ks</option>
-          <option value="5">5 ks</option>
-        </select>
-      </div>
-      <div class="d-flex align-items-center mb-2">
-        <input class="form-check-input me-2" type="checkbox" value="Caprese - 120 Kč" id="caprese">
-        <label class="form-check-label me-3" for="caprese">Caprese (120 Kč)</label>
-        <select class="form-select select-qty" id="caprese_qty" disabled>
-          <option value="1">1 ks</option>
-          <option value="2">2 ks</option>
-          <option value="3">3 ks</option>
-          <option value="4">4 ks</option>
-          <option value="5">5 ks</option>
-        </select>
-      </div>
-
-      <!-- Polévky -->
-      <h3>Polévky</h3>
-      <div class="d-flex align-items-center mb-2">
-        <input class="form-check-input me-2" type="checkbox" value="Rajčatová polévka - 90 Kč" id="tomatoSoup">
-        <label class="form-check-label me-3" for="tomatoSoup">Rajčatová polévka (90 Kč)</label>
-        <select class="form-select select-qty" id="tomatoSoup_qty" disabled>
-          <option value="1">1 ks</option>
-          <option value="2">2 ks</option>
-          <option value="3">3 ks</option>
-          <option value="4">4 ks</option>
-          <option value="5">5 ks</option>
-        </select>
-      </div>
-      <div class="d-flex align-items-center mb-2">
-        <input class="form-check-input me-2" type="checkbox" value="Kuřecí vývar - 80 Kč" id="chickenSoup">
-        <label class="form-check-label me-3" for="chickenSoup">Kuřecí vývar (80 Kč)</label>
-        <select class="form-select select-qty" id="chickenSoup_qty" disabled>
-          <option value="1">1 ks</option>
-          <option value="2">2 ks</option>
-          <option value="3">3 ks</option>
-          <option value="4">4 ks</option>
-          <option value="5">5 ks</option>
-        </select>
-      </div>
-
-      <!-- Hlavní jídla -->
-      <h3>Hlavní jídla</h3>
-      <div class="d-flex align-items-center mb-2">
-        <input class="form-check-input me-2" type="checkbox" value="Pizza Margherita - 180 Kč" id="pizza">
-        <label class="form-check-label me-3" for="pizza">Pizza Margherita (180 Kč)</label>
-        <select class="form-select select-qty" id="pizza_qty" disabled>
-          <option value="1">1 ks</option>
-          <option value="2">2 ks</option>
-          <option value="3">3 ks</option>
-          <option value="4">4 ks</option>
-          <option value="5">5 ks</option>
-        </select>
-      </div>
-      <div class="d-flex align-items-center mb-2">
-        <input class="form-check-input me-2" type="checkbox" value="Hovězí steak - 350 Kč" id="steak">
-        <label class="form-check-label me-3" for="steak">Hovězí steak (350 Kč)</label>
-        <select class="form-select select-qty" id="steak_qty" disabled>
-          <option value="1">1 ks</option>
-          <option value="2">2 ks</option>
-          <option value="3">3 ks</option>
-          <option value="4">4 ks</option>
-          <option value="5">5 ks</option>
-        </select>
-      </div>
-      <div class="d-flex align-items-center mb-2">
-        <input class="form-check-input me-2" type="checkbox" value="Těstoviny Carbonara - 220 Kč" id="carbonara">
-        <label class="form-check-label me-3" for="carbonara">Těstoviny Carbonara (220 Kč)</label>
-        <select class="form-select select-qty" id="carbonara_qty" disabled>
-          <option value="1">1 ks</option>
-          <option value="2">2 ks</option>
-          <option value="3">3 ks</option>
-          <option value="4">4 ks</option>
-          <option value="5">5 ks</option>
-        </select>
-      </div>
-      <div class="d-flex align-items-center mb-2">
-        <input class="form-check-input me-2" type="checkbox" value="Grilované kuře - 250 Kč" id="grilledChicken">
-        <label class="form-check-label me-3" for="grilledChicken">Grilované kuře (250 Kč)</label>
-        <select class="form-select select-qty" id="grilledChicken_qty" disabled>
-          <option value="1">1 ks</option>
-          <option value="2">2 ks</option>
-          <option value="3">3 ks</option>
-          <option value="4">4 ks</option>
-          <option value="5">5 ks</option>
-        </select>
-      </div>
-
-      <!-- Dezerty -->
-      <h3>Dezerty</h3>
-      <div class="d-flex align-items-center mb-2">
-        <input class="form-check-input me-2" type="checkbox" value="Tiramisu - 120 Kč" id="tiramisu">
-        <label class="form-check-label me-3" for="tiramisu">Tiramisu (120 Kč)</label>
-        <select class="form-select select-qty" id="tiramisu_qty" disabled>
-          <option value="1">1 ks</option>
-          <option value="2">2 ks</option>
-          <option value="3">3 ks</option>
-          <option value="4">4 ks</option>
-          <option value="5">5 ks</option>
-        </select>
-      </div>
-      <div class="d-flex align-items-center mb-2">
-        <input class="form-check-input me-2" type="checkbox" value="Panna Cotta - 110 Kč" id="pannaCotta">
-        <label class="form-check-label me-3" for="pannaCotta">Panna Cotta (110 Kč)</label>
-        <select class="form-select select-qty" id="pannaCotta_qty" disabled>
-          <option value="1">1 ks</option>
-          <option value="2">2 ks</option>
-          <option value="3">3 ks</option>
-          <option value="4">4 ks</option>
-          <option value="5">5 ks</option>
-        </select>
-      </div>
-
-      <!-- Nápoje -->
-      <h3>Teplé nápoje</h3>
-      <div class="d-flex align-items-center mb-2">
-        <input class="form-check-input me-2" type="checkbox" value="Espresso - 50 Kč" id="espresso">
-        <label class="form-check-label me-3" for="espresso">Espresso (50 Kč)</label>
-        <select class="form-select select-qty" id="espresso_qty" disabled>
-          <option value="1">1 ks</option>
-          <option value="2">2 ks</option>
-          <option value="3">3 ks</option>
-          <option value="4">4 ks</option>
-          <option value="5">5 ks</option>
-        </select>
-      </div>
-      <div class="d-flex align-items-center mb-2">
-        <input class="form-check-input me-2" type="checkbox" value="Cappuccino - 70 Kč" id="cappuccino">
-        <label class="form-check-label me-3" for="cappuccino">Cappuccino (70 Kč)</label>
-        <select class="form-select select-qty" id="cappuccino_qty" disabled>
-          <option value="1">1 ks</option>
-          <option value="2">2 ks</option>
-          <option value="3">3 ks</option>
-          <option value="4">4 ks</option>
-          <option value="5">5 ks</option>
-        </select>
-      </div>
-
-      <h3>Studené nápoje</h3>
-      <div class="d-flex align-items-center mb-2">
-        <input class="form-check-input me-2" type="checkbox" value="Minerálka - 40 Kč" id="water">
-        <label class="form-check-label me-3" for="water">Minerálka (40 Kč)</label>
-        <select class="form-select select-qty" id="water_qty" disabled>
-          <option value="1">1 ks</option>
-          <option value="2">2 ks</option>
-          <option value="3">3 ks</option>
-          <option value="4">4 ks</option>
-          <option value="5">5 ks</option>
-        </select>
-      </div>
-      <div class="d-flex align-items-center mb-2">
-        <input class="form-check-input me-2" type="checkbox" value="Coca Cola - 50 Kč" id="cola">
-        <label class="form-check-label me-3" for="cola">Coca Cola (50 Kč)</label>
-        <select class="form-select select-qty" id="cola_qty" disabled>
-          <option value="1">1 ks</option>
-          <option value="2">2 ks</option>
-          <option value="3">3 ks</option>
-          <option value="4">4 ks</option>
-          <option value="5">5 ks</option>
-        </select>
-      </div>
-      <div class="d-flex align-items-center mb-2">
-        <input class="form-check-input me-2" type="checkbox" value="Džus - 60 Kč" id="juice">
-        <label class="form-check-label me-3" for="juice">Džus (60 Kč)</label>
-        <select class="form-select select-qty" id="juice_qty" disabled>
-          <option value="1">1 ks</option>
-          <option value="2">2 ks</option>
-          <option value="3">3 ks</option>
-          <option value="4">4 ks</option>
-          <option value="5">5 ks</option>
-        </select>
-      </div>
-
-      <!-- Tlačítko pro zobrazení rekapitulace -->
-      <button type="button" class="btn btn-primary mt-3" id="previewOrder">Zobrazit rekapitulaci</button>
-    </form>
-
-    <!-- Rekapitulace objednávky -->
-    <div id="orderSummary" class="mt-5 d-none">
-      <h2>Rekapitulace</h2>
-      <ul id="summaryList"></ul>
-      <p><strong>Celková cena:</strong> <span id="totalPrice"></span> Kč</p>
-      <button type="button" class="btn btn-success" id="submitOrder">Potvrdit objednávku</button>
+    <div class="table-container">
+      <!-- Tabulka pro zobrazení objednávek -->
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Číslo stolu</th>
+            <th>Objednávka</th>
+            <th>Stav</th>
+          </tr>
+        </thead>
+        <tbody id="ordersTable">
+          <!-- Objednávky budou načteny dynamicky pomocí JavaScriptu -->
+        </tbody>
+      </table>
     </div>
   </div>
 
-  <!-- JavaScript -->
+  <!-- Plovoucí tlačítko pro přidání nové objednávky -->
+  <button class="floating-button" id="newOrderButton" onclick="goToNewOrder()">
+    <span class="button-text">Nová objednávka</span>
+    <span class="button-icon"><i class="bi bi-plus-circle"></i></span>
+  </button>
+
   <script>
-    // Povolit výběr počtu kusů při zaškrtnutí checkboxu
-    document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-      checkbox.addEventListener('change', function() {
-        const qtyField = document.getElementById(`${checkbox.id}_qty`);
-        qtyField.disabled = !checkbox.checked; // Aktivovat nebo deaktivovat rozbalovací nabídku
-      });
-    });
-
-    // Zobrazení rekapitulace
-    document.getElementById('previewOrder').addEventListener('click', function() {
-      const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
-      const summaryList = document.getElementById('summaryList');
-      summaryList.innerHTML = '';
-      let totalPrice = 0;
-
-      // Pro každou vybranou položku vypočítat množství a cenu
-      checkboxes.forEach(checkbox => {
-        const qtyField = document.getElementById(`${checkbox.id}_qty`);
-        const qty = parseInt(qtyField.value) || 1;
-        const [item, price] = checkbox.value.split(' - ');
-        const itemPrice = parseInt(price.replace(' Kč', '')) * qty;
-
-        const listItem = document.createElement('li');
-        listItem.textContent = `${item} (${price} x ${qty}) - ${itemPrice} Kč`;
-        summaryList.appendChild(listItem);
-
-        totalPrice += itemPrice;
-      });
-
-      document.getElementById('totalPrice').textContent = totalPrice;
-      document.getElementById('orderSummary').classList.remove('d-none');
-    });
-
-    // Odeslání objednávky
-    document.getElementById('submitOrder').addEventListener('click', async function () {
-      const table = document.getElementById('table').value;
-      const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
-
-      const items = Array.from(checkboxes).map((checkbox) => {
-        const qtyField = document.getElementById(`${checkbox.id}_qty`);
-        const qty = parseInt(qtyField.value) || 1;
-        const [name] = checkbox.value.split(' - ');
-        return { name, qty };
-      });
-
+    // Funkce pro načítání objednávek z API serveru
+    async function loadOrders() {
       try {
-        const response = await fetch('https://Objednavkovy-system.onrender.com/api/orders', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ tableNumber: parseInt(table), items }),
-        });
+        const response = await fetch('https://restaurant-ordering-backend.onrender.com/api/orders');
+        const orders = await response.json(); // Zpracování odpovědi jako JSON
+        const table = document.getElementById('ordersTable');
+        table.innerHTML = ''; // Vymazání předchozího obsahu tabulky
 
-        if (response.ok) {
-          const data = await response.json();
-          console.log('Objednávka byla odeslána:', data);
-          alert('Objednávka byla úspěšně odeslána!');
-        } else {
-          const error = await response.text();
-          console.error('Chyba při odesílání objednávky:', error);
-          alert('Chyba při odesílání objednávky.');
-        }
-      } catch (err) {
-        console.error('Chyba při komunikaci se serverem:', err);
-        alert('Chyba při komunikaci se serverem.');
+        // Iterace přes objednávky a jejich zobrazení v tabulce
+        orders.forEach(order => {
+          const row = document.createElement('tr');
+
+          // Formátování položek objednávky s novými řádky
+          const formattedItems = order.items.map(item => `${item.qty}x ${item.name}`).join('\n');
+
+          row.innerHTML = `
+            <td>${order.tableNumber}</td>
+            <td class="order-items">${formattedItems}</td>
+            <td>
+              <span class="${
+                order.status === 'completed' ? 'status-completed' : 'status-preparing'
+              }">${order.status === 'completed' ? 'K vyzvednutí' : 'V přípravě'}</span>
+            </td>
+          `;
+          table.appendChild(row); // Přidání řádku do tabulky
+        });
+      } catch (error) {
+        console.error('Chyba při načítání objednávek:', error); // Výpis chyby v konzoli
       }
-    });
+    }
+
+    // Funkce pro přesměrování na stránku nové objednávky
+    function goToNewOrder() {
+      window.location.href = 'index.html'; // Přesměrování na jinou stránku
+    }
+
+    // Automatické načítání objednávek každých 5 sekund
+    loadOrders();
+    setInterval(loadOrders, 5000);
   </script>
 </body>
 </html>
