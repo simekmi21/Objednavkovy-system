@@ -11,7 +11,7 @@ const char* ssid = "SSID"; // Zadat název mojí Wi-Fi sítě
 const char* password = "PASS"; // Zadat heslo k mojí Wi-Fi
 
 // Adresa API serveru
-const char* serverName = "https://restaurant-ordering-backend.onrender.com/api/orders"; // URL serveru pro získávání objednávek
+const char* serverName = "https://objednavkovy-system-backend.onrender.com/api/orders"; // URL serveru pro získávání objednávek
 
 // Nastavení LED matice
 const int pinCS = 5;      // Pin pro chip select na LED matici
