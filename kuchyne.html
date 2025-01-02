@@ -154,7 +154,7 @@
     // Načítání objednávek z API
     async function loadOrders() {
       try {
-        const response = await fetch('https://restaurant-ordering-backend.onrender.com/api/orders');
+        const response = await fetch('https://objednavkovy-system-backend.onrender.com/api/orders');
         const orders = await response.json();
         const table = document.getElementById('ordersTable');
         table.innerHTML = '';
@@ -193,7 +193,7 @@ order.status === 'pending' ? `<button class="btn btn-success btn-sm" onclick="co
     // Aktualizace stavu objednávky na "completed"
     async function markAsCompleted(orderId) {
       try {
-        const response = await fetch(`https://restaurant-ordering-backend.onrender.com/api/orders/${orderId}`, {
+        const response = await fetch(`https://objednavkovy-system-backend.onrender.com/api/orders/${orderId}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ status: 'completed' }),
