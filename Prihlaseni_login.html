@@ -60,9 +60,9 @@
       const password = document.getElementById('password').value;
 
       // Ověření zadaných údajů
-      if (username === 'kuchar' && password === 'heslo123') { //Nastavení user a pass pro kuchaře
+      if (username === 'kuchar' && password === 'Heslo123') { //Nastavení user a pass pro kuchaře
         localStorage.setItem('loggedIn', 'true'); // Uložení informace o přihlášení
-        window.location.href = 'kitchen.html'; // Přesměrování na stránku kuchyně
+        window.location.href = 'kuchyne.html'; // Přesměrování na stránku kuchyně
       } else {
         alert('Nesprávné uživatelské jméno nebo heslo.'); // Chybová zpráva při nesprávném zadání
       }
