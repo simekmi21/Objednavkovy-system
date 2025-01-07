@@ -151,7 +151,7 @@
     // Funkce pro načítání objednávek z API serveru
     async function loadOrders() {
       try {
-        const response = await fetch('https://objednavkovy-system-backend.onrender.com/api/orders');
+        const response = await fetch('https://objednavkovy-system.onrender.com/api/orders');
         const orders = await response.json(); // Zpracování odpovědi jako JSON
         const table = document.getElementById('ordersTable');
         table.innerHTML = ''; // Vymazání předchozího obsahu tabulky
@@ -181,7 +181,7 @@
 
     // Funkce pro přesměrování na stránku nové objednávky
     function goToNewOrder() {
-      window.location.href = 'index.html'; // Přesměrování na jinou stránku
+      window.location.href = 'Stranka_zakaznik.html'; // Přesměrování na jinou stránku
     }
 
     // Automatické načítání objednávek každých 5 sekund
