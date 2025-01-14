@@ -7,8 +7,8 @@
 #include <map>
 
 // Wi-Fi přihlašovací údaje
-const char* ssid = "SSID"; // Zadat název mojí Wi-Fi sítě
-const char* password = "PASS"; // Zadat heslo k mojí Wi-Fi
+const char* ssid = "O2-Internet-402-EXT"; // Zadat název mojí Wi-Fi sítě
+const char* password = "ataNJGHk"; // Zadat heslo k mojí Wi-Fi
 
 // Adresa API serveru
 const char* serverName = "https://objednavkovy-system-backend.onrender.com/api/orders"; // URL serveru pro získávání objednávek
