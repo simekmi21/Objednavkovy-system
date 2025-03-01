@@ -11,7 +11,7 @@ const char* ssid = "Z Flip4"; // Zadat název mojí Wi-Fi sítě
 const char* password = "12345678"; // Zadat heslo k mojí Wi-Fi
 
 // Adresa API serveru
-const char* serverName = "https://objednavkovy-system-backend.onrender.com/api/orders"; // URL serveru pro získávání objednávek
+const char* serverName = "https://objednavkovy-system.onrender.com/api/orders"; // URL serveru pro získávání objednávek
 
 // Nastavení LED matice
 // CLK (SCK) → GPIO 18 (výchozí pro SPI)
@@ -23,6 +23,8 @@ const int vDisplays = 1;  // Počet vertikálních displejů
 Max72xxPanel matrix(pinCS, hDisplays, vDisplays);
 
 // Nastavení DFPlayer Mini
+// SPK1 → Plus reproduktor
+// SPK2 → Mínus reproduktor
 HardwareSerial mySerial(1);  // Využití UART1 pro komunikaci
 DFRobotDFPlayerMini myDFPlayer;
 
@@ -31,8 +33,10 @@ std::map<int, int> orderDisplayCounts;
 
 void setup() {
   // Inicializace sériové komunikace
+  // RX → GPIO16
+  // TX → GPIO17
   Serial.begin(115200);
-  mySerial.begin(9600, SERIAL_8N1, 16, 17); // RX na GPIO16, TX na GPIO17
+  mySerial.begin(9600, SERIAL_8N1, 16, 17);
 
   // Inicializace DFPlayer Mini
   if (!myDFPlayer.begin(mySerial)) {
