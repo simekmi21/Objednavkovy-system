@@ -65,7 +65,7 @@ void setup() {
   }
 
   // Zobrazení úvodní zprávy
-  displayMessage("System Ready");
+  displayMessage("System pripraven");
 }
 
 void loop() {
