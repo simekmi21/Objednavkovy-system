@@ -14,6 +14,9 @@ const char* password = "12345678"; // Zadat heslo k mojí Wi-Fi
 const char* serverName = "https://objednavkovy-system-backend.onrender.com/api/orders"; // URL serveru pro získávání objednávek
 
 // Nastavení LED matice
+// CLK (SCK) → GPIO 18 (výchozí pro SPI)
+// DIN (MOSI) → GPIO 23 (výchozí pro SPI)
+// CS (SS) → GPIO 5
 const int pinCS = 5;      // Pin pro chip select na LED matici
 const int hDisplays = 4;  // Počet horizontálních displejů
 const int vDisplays = 1;  // Počet vertikálních displejů
