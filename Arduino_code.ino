@@ -7,7 +7,7 @@
 #include <map>
 
 // Wi-Fi přihlašovací údaje
-const char* ssid = "Z Flip4 uživatele Michal"; // Zadat název mojí Wi-Fi sítě
+const char* ssid = "Z Flip4"; // Zadat název mojí Wi-Fi sítě
 const char* password = "12345678"; // Zadat heslo k mojí Wi-Fi
 
 // Adresa API serveru
